@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import QRCode from "qrcode.react";
 import { Input, Button, Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  PlusOutlined,
+  MinusOutlined,
+} from "@ant-design/icons";
 
 const { TextArea } = Input;
 
@@ -9,6 +13,7 @@ const QrCodeGenerator = () => {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [displayQr, setDisplayQr] = useState(false);
+  const [qrSize, setQrSize] = useState(256); // Initial size of QR code
 
   useEffect(() => {
     if (text) {
@@ -28,6 +33,16 @@ const QrCodeGenerator = () => {
     setText(event.target.value);
   };
 
+  const increaseQrSize = () => {
+    setQrSize(qrSize + 50); // Increase size by 50 pixels
+  };
+
+  const decreaseQrSize = () => {
+    if (qrSize > 50) {
+      setQrSize(qrSize - 50); // Decrease size by 50 pixels, minimum size 50 pixels
+    }
+  };
+
   return (
     <div className="flex flex-col items-center h-screen">
       <div className="p-6 bg-gray-100 rounded-lg shadow-xl max-w-7xl">
@@ -38,6 +53,23 @@ const QrCodeGenerator = () => {
           onChange={handleInputChange}
           rows={8}
         />
+        <div className="flex items-center justify-center mb-4">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={increaseQrSize}
+            className="mr-2"
+          >
+            Increase Size
+          </Button>
+          <Button
+            type="primary"
+            icon={<MinusOutlined />}
+            onClick={decreaseQrSize}
+          >
+            Decrease Size
+          </Button>
+        </div>
         {loading ? (
           <div className="flex items-center justify-center">
             <Spin
@@ -47,7 +79,7 @@ const QrCodeGenerator = () => {
         ) : (
           displayQr && (
             <div className="flex items-center justify-center">
-              <QRCode value={text} size={256} />
+              <QRCode value={text} size={qrSize} />
             </div>
           )
         )}
