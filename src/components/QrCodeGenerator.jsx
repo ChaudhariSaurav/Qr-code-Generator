@@ -5,6 +5,7 @@ import {
   LoadingOutlined,
   PlusOutlined,
   MinusOutlined,
+  PrinterOutlined,
 } from "@ant-design/icons";
 
 const { TextArea } = Input;
@@ -43,6 +44,25 @@ const QrCodeGenerator = () => {
     }
   };
 
+  const handlePrint = () => {
+    const qrCodeElement = document.getElementById("qr-code");
+    if (qrCodeElement) {
+      const qrCodeUrl = qrCodeElement.toDataURL("image/png");
+      const windowContent = `<img src="${qrCodeUrl}" />`;
+      const printWindow = window.open("", "_blank");
+      printWindow.document.open();
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print QR Code</title>
+          </head>
+          <body onload="window.print();">${windowContent}</body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+  };
+
   return (
     <div className="flex flex-col items-center h-screen">
       <div className="p-6 bg-gray-100 rounded-lg shadow-xl max-w-7xl">
@@ -66,8 +86,16 @@ const QrCodeGenerator = () => {
             type="primary"
             icon={<MinusOutlined />}
             onClick={decreaseQrSize}
+            className="mr-2"
           >
             Decrease Size
+          </Button>
+          <Button
+            type="primary"
+            icon={<PrinterOutlined />}
+            onClick={handlePrint}
+          >
+            Print QR Code
           </Button>
         </div>
         {loading ? (
@@ -79,7 +107,7 @@ const QrCodeGenerator = () => {
         ) : (
           displayQr && (
             <div className="flex items-center justify-center">
-              <QRCode value={text} size={qrSize} />
+              <QRCode id="qr-code" value={text} size={qrSize} />
             </div>
           )
         )}
